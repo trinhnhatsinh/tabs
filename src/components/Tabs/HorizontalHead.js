@@ -133,12 +133,52 @@ class HorizontalHead extends React.PureComponent {
         ..._preState,
         hasScroll: true,
       }))
+    } else {
+      this.setState(_preState => ({
+        ..._preState,
+        hasScroll: false,
+      }))
+    }
+
+    if (this.props.update) {
+      const scrollX = this.refs['tabs-titles'].scrollLeft
+      const widthBox = this.refs['tabs-titles'].offsetWidth
+
+      // setState
+      if (scrollX - widthBox / 2 > 0) {
+        this.setState(_preState => ({
+          ..._preState,
+          visibleButtonPrev: true,
+        }))
+      } else {
+        this.setState(_preState => ({
+          ..._preState,
+          visibleButtonPrev: false,
+        }))
+      }
+
+      if (
+        scrollX + widthBox / 2 >
+        this.refs['tabs-titles'].scrollWidth
+      ) {
+        this.setState(_preState => ({
+          ..._preState,
+          visibleButtonNext: false,
+        }))
+      } else {
+        this.setState(_preState => ({
+          ..._preState,
+          visibleButtonNext: true,
+        }))
+      }
+
+      this.props.handleSetUpdate()
     }
   }
 
   render() {
     const { titles, activeTab } = this.props
-    console.log('render')
+
     return (
       <div className="example-tabs-head">
         {this.state.hasScroll ? (
@@ -161,7 +201,7 @@ class HorizontalHead extends React.PureComponent {
                 className={`example-tabs-title-item ${
                   item.key === activeTab ? 'tab-active' : ''
                 }`}
-                onClick={(e) => this.selectTab(e, item.key)}
+                onClick={e => this.selectTab(e, item.key)}
               >
                 {item.title}
               </div>
